@@ -9,7 +9,7 @@ on:
 jobs:
   build-windows:
     name: Build
-    runs-on: windows-2019
+    runs-on: windows-latest
     env:
       SONAR_SCANNER_VERSION: 4.7.0.2747
       SONAR_SERVER_URL: "https://sonarcloud.io"
@@ -187,10 +187,10 @@ jobs:
         echo "$HOME\.sonar\build-wrapper-win-x86" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Run build-wrapper
       run: |
-        New-Item -ItemType directory -Path build
-        cmake -S . -B build
-        build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
-        working-directory: ${{ runner.workspace }}/_build/complete
+        # New-Item -ItemType directory -Path build
+        # cmake -S . -B build
+        build-wrapper-win-x86-64 --out-dir ${{ runner.workspace }}/_build/complete cmake --build --config Release
+        # working-directory: ${{ runner.workspace }}/_build/complete
 
     # Create Python.
     # The strang-looking double-cmake is an ugly workaround to force CMake to
