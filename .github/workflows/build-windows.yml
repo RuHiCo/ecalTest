@@ -189,7 +189,7 @@ jobs:
       run: |
         # New-Item -ItemType directory -Path build
         # cmake -S . -B build
-        build-wrapper-win-x86-64 --out-dir ${{ runner.workspace }}/_build/complete cmake --build --config Release
+        build-wrapper-win-x86-64 --out-dir ${{ runner.workspace }}/_build/complete cmake --build . --config Release
         # working-directory: ${{ runner.workspace }}/_build/complete
 
     # Create Python.
