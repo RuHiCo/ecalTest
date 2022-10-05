@@ -181,10 +181,10 @@ jobs:
         echo "$HOME\.sonar\build-wrapper-win-x86" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Run build-wrapper
       run: |
-      cd ..
-      New-Item -ItemType directory -Path build
-      cmake -S . -B build
-      build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
+        cd ..
+        New-Item -ItemType directory -Path build
+        cmake -S . -B build
+        build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
       working-directory: ${{ runner.workspace }}/_build/complete
     #  working-directory: ${{ runner.workspace }}/_build/complete
     # Create Python.
