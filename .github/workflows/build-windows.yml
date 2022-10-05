@@ -8,12 +8,8 @@ on:
 
 jobs:
   build-windows:
-    name: Build
     runs-on: windows-2019
-    env:
-      SONAR_SCANNER_VERSION: 4.7.0.2747
-      SONAR_SERVER_URL: "https://sonarcloud.io"
-      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
+
     steps:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
@@ -82,7 +78,7 @@ jobs:
         cmake %GITHUB_WORKSPACE% -G "Visual Studio 16 2019" -A x64 -T v140 ^
         -DHAS_HDF5=ON ^
         -DHAS_QT5=ON ^
-        -DHAS_CURL=ON ^
+        -DHAS_CURL=OFF ^
         -DHAS_CAPNPROTO=OFF ^
         -DBUILD_DOCS=OFF ^
         -DBUILD_APPS=OFF ^
@@ -100,13 +96,14 @@ jobs:
         -DECAL_THIRDPARTY_BUILD_PROTOBUF=ON ^
         -DECAL_THIRDPARTY_BUILD_SPDLOG=ON ^
         -DECAL_THIRDPARTY_BUILD_TINYXML2=ON ^
-        -DECAL_THIRDPARTY_BUILD_FINEFTP=ON ^
-        -DECAL_THIRDPARTY_BUILD_CURL=ON ^
-        -DECAL_THIRDPARTY_BUILD_GTEST=ON ^
+        -DECAL_THIRDPARTY_BUILD_FINEFTP=OFF ^
+        -DECAL_THIRDPARTY_BUILD_CURL=OFF ^
+        -DECAL_THIRDPARTY_BUILD_GTEST=OFF ^
         -DECAL_THIRDPARTY_BUILD_HDF5=ON ^
         -DECAL_THIRDPARTY_BUILD_RECYCLE=ON ^
         -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON ^
         -DECAL_THIRDPARTY_BUILD_QWT=OFF ^
+        -DECAL_THIRDPARTY_BUILD_YAML-CPP=OFF ^
         -DBUILD_SHARED_LIBS=OFF ^
         -DCMAKE_PREFIX_PATH="%ProgramFiles%/Cap'n Proto/lib/cmake/CapnProto" ^
         -DCMAKE_BUILD_TYPE=Debug ^
@@ -145,6 +142,7 @@ jobs:
         -DECAL_THIRDPARTY_BUILD_RECYCLE=ON ^
         -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON ^
         -DECAL_THIRDPARTY_BUILD_QWT=ON ^
+        -DECAL_THIRDPARTY_BUILD_YAML-CPP=ON ^
         -DBUILD_SHARED_LIBS=OFF ^
         -DCMAKE_PREFIX_PATH="%ProgramFiles%/Cap'n Proto/lib/cmake/CapnProto" ^
         -DCMAKE_BUILD_TYPE=Release ^
@@ -157,35 +155,10 @@ jobs:
       run: cmake --build . --config Debug
       working-directory: ${{ runner.workspace }}/_build/sdk
 
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 11
-    - name: Download and set up sonar-scanner
-      env:
-        SONAR_SCANNER_DOWNLOAD_URL: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ env.SONAR_SCANNER_VERSION }}-windows.zip
-      run: |
-        New-Item -Force -ItemType directory -Path $HOME\.sonar
-        curl -sSLo $HOME\.sonar\sonar-scanner.zip ${{ env.SONAR_SCANNER_DOWNLOAD_URL }}
-        unzip -o $HOME\.sonar\sonar-scanner.zip -d $HOME\.sonar\
-        echo "$HOME\.sonar\sonar-scanner-${{ env.SONAR_SCANNER_VERSION }}-windows\bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Download and set up build-wrapper
-      env:
-        BUILD_WRAPPER_DOWNLOAD_URL: ${{ env.SONAR_SERVER_URL }}/static/cpp/build-wrapper-win-x86.zip
-      run: |
-        curl -sSLo $HOME\.sonar\build-wrapper.zip ${{ env.BUILD_WRAPPER_DOWNLOAD_URL }}
-        unzip -o $HOME\.sonar\build-wrapper.zip -d $HOME\.sonar\
-        echo "$HOME\.sonar\build-wrapper-win-x86" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Run build-wrapper
-      run: |
-        New-Item -ItemType directory -Path build
-        cmake -S . -B build
-        build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
-    #  working-directory: ${{ runner.workspace }}/_build/complete
-    # working-directory: ${{ runner.workspace }}/_build/complete
+    - name: Build Release
+      run: cmake --build . --config Release
+      working-directory: ${{ runner.workspace }}/_build/complete
+
     # Create Python.
     # The strang-looking double-cmake is an ugly workaround to force CMake to
     # re-find Python, after we have changed the venv from the outside. The
@@ -322,11 +295,3 @@ jobs:
       with:
         name: windows-python-wheels
         path: ${{ runner.workspace }}/_build/complete/_deploy/*.whl
-    
-
-    - name: Run sonar-scanner
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
