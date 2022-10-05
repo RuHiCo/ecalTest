@@ -183,8 +183,8 @@ jobs:
       run: |
         New-Item -ItemType directory -Path build
         cmake -S . -B build
-        build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} --build . --config Release
-        working-directory: ${{ runner.workspace }}\_build\complete
+        build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build . --config Release
+        
     # Create Python.
     # The strang-looking double-cmake is an ugly workaround to force CMake to
     # re-find Python, after we have changed the venv from the outside. The
