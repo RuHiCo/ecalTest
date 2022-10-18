@@ -180,7 +180,7 @@ jobs:
 
     - name: Build Release
       run: |
-        cd ${{ runner.workspace }}/ecalTest/_build/complete/
+        cd ${{ runner.workspace }}/ecalTest/_build/complete
         cmake -S ../../ -B .
         build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build . --config Release
 
