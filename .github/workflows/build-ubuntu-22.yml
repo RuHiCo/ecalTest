@@ -50,8 +50,8 @@ jobs:
         
         export CC=/usr/bin/gcc-11
         export CXX=/usr/bin/g++-11
-        mkdir "${{ runner.workspace }}/_build"
-        cd "${{ runner.workspace }}/_build"
+        mkdir "${{ runner.workspace }}/build"
+        cd "${{ runner.workspace }}/build"
         cmake $GITHUB_WORKSPACE -G "Ninja" \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
         -DHAS_HDF5=ON \
@@ -115,8 +115,8 @@ jobs:
     - name: Build Wrapper Release
       run: |
         cd ${{ runner.workspace }}/
-        cmake -S ecalTest/ -B _build/
-        build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build _build/ --config Release
+        cmake -S ecalTest/ -B build/
+        build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
       
 
     # Create Python Wheels
@@ -135,27 +135,27 @@ jobs:
         cmake $GITHUB_WORKSPACE -DPython_FIND_VIRTUALENV=ONLY
         cmake --build . --target create_python_wheel --config Release
       shell: bash
-      working-directory: ${{ runner.workspace }}/_build
+      working-directory: ${{ runner.workspace }}/build
 
     - name: Run Tests
       run: ctest -V
-      working-directory: ${{ runner.workspace }}/_build
+      working-directory: ${{ runner.workspace }}/build
 
     - name: Pack
       run: cpack -G DEB
-      working-directory: ${{ runner.workspace }}/_build
+      working-directory: ${{ runner.workspace }}/build
 
     - name: Upload Debian
       uses: actions/upload-artifact@v3
       with:
         name: ubuntu-debian
-        path: ${{ runner.workspace }}/_build/_deploy/*.deb
+        path: ${{ runner.workspace }}/build/_deploy/*.deb
 
     - name: Upload Python Wheel
       uses: actions/upload-artifact@v3
       with:
         name: ubuntu-python-wheel
-        path: ${{ runner.workspace }}/_build/_deploy/*.whl
+        path: ${{ runner.workspace }}/build/_deploy/*.whl
         
     - name: Run sonar-scanner
       env:
