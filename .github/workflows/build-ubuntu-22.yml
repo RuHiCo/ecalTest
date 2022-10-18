@@ -115,8 +115,7 @@ jobs:
     - name: Build Wrapper Release
       run: |
         cd ${{ runner.workspace }}/
-        mkdir _build/
-        cmake -S ecalTest/ -B build/
+        cmake -S ecalTest/ -B _build/
         build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build _build/ --config Release
       
 
