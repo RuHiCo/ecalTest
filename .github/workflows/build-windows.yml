@@ -181,8 +181,8 @@ jobs:
     - name: Build Release
       run: |
         cd ${{ runner.workspace }}/
-        cmake -S ecalTest -B _build/
-        build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build _build/ --config Release
+        cmake -S ecalTest -B _build/complete
+        build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build _build/complete --config Release
 
 
     # Create Python.
