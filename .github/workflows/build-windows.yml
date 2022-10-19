@@ -182,7 +182,7 @@ jobs:
       run: |
         cd ${{ runner.workspace }}/
         cmake -S ecalTest -B _build/complete
-        build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build _build/complete --config 
+        build-wrapper-win-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build _build/complete --config Release
         
     - name: Run sonar-scanner
       env:
