@@ -137,8 +137,9 @@ jobs:
       working-directory: ${{ runner.workspace }}/build
 
     - name: Run Tests
-      mkdir junitTest
-      run: ctest -V --output-junit junitTest/
+      run: |
+        mkdir junitTest
+        ctest -V --output-junit junitTest/
       working-directory: ${{ runner.workspace }}/build
 
     - name: Pack
