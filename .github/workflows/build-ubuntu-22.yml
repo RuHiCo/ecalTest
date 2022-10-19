@@ -117,13 +117,6 @@ jobs:
         cd ${{ runner.workspace }}/
         cmake -S ecalTest/ -B build/
         build-wrapper-linux-x86-64 --out-dir ecalTest/${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
-      
-    - name: Run sonar-scanner/
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        sonar-scanner -X --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
 
     # Create Python Wheels
     # The strang-looking double-cmake is an ugly workaround to force CMake to
@@ -163,3 +156,9 @@ jobs:
         name: ubuntu-python-wheel
         path: ${{ runner.workspace }}/build/_deploy/*.whl
         
+    - name: Run sonar-scanner/
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
