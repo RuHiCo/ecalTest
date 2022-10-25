@@ -112,11 +112,11 @@ jobs:
         unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
         echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
     
-    - name: Build Wrapper Debug
+    - name: Build Wrapper Release
       run: |
-        cd ${{ runner.workspace }}/ecalTest/
-        cmake -S . -B build/
-        build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Debug
+        cd ${{ runner.workspace }}/
+        cmake -S ecalTest/ -B build/
+        build-wrapper-linux-x86-64 --out-dir ecalTest/${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
 
     # Create Python Wheels
     # The strang-looking double-cmake is an ugly workaround to force CMake to
