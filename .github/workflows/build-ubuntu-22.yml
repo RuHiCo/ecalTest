@@ -50,8 +50,8 @@ jobs:
         
         export CC=/usr/bin/gcc-11
         export CXX=/usr/bin/g++-11
-        mkdir "${{ runner.workspace }}/ecalTest/build"
-        cd "${{ runner.workspace }}/ecalTest/build"
+        mkdir "${{ runner.workspace }}/build"
+        cd "${{ runner.workspace }}/build"
         cmake $GITHUB_WORKSPACE -G "Ninja" \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
         -DHAS_HDF5=ON \
@@ -140,27 +140,27 @@ jobs:
       run: |
         mkdir junitTest
         ctest -V --output-junit junitTest/
-      working-directory: ${{ runner.workspace }}/ecalTest/build
+      working-directory: ${{ runner.workspace }}/build
 
     - name: Pack
       run: cpack -G DEB
-      working-directory: ${{ runner.workspace }}/ecalTest/build
+      working-directory: ${{ runner.workspace }}/build
 
     - name: Upload Debian
       uses: actions/upload-artifact@v3
       with:
         name: ubuntu-debian
-        path: ${{ runner.workspace }}/ecalTest/build/_deploy/*.deb
+        path: ${{ runner.workspace }}/build/_deploy/*.deb
 
     - name: Upload Python Wheel
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3v3
       with:
         name: ubuntu-python-wheel
-        path: ${{ runner.workspace }}/ecalTest/build/_deploy/*.whl
+        path: ${{ runner.workspace }}/build/_deploy/*.whl
         
     - name: Run sonar-scanner/
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
-        sonar-scanner --define sonar.junit.reportPaths="${{ runner.workspace }}/ecalTest/build/junitTest/*" --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+        sonar-scanner --define sonar.junit.reportPaths="${{ runner.workspace }}/build/junitTest/*" --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
