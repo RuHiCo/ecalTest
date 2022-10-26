@@ -116,7 +116,7 @@ jobs:
       run: |
         cd ${{ runner.workspace }}/
         cmake -S ecalTest/ -B build/
-        build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
+        build-wrapper-linux-x86-64 --out-dir ecalTest/${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
 
     # Create Python Wheels
     # The strang-looking double-cmake is an ugly workaround to force CMake to
@@ -164,4 +164,3 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
         sonar-scanner --define sonar.junit.reportPaths="${{ runner.workspace }}/build/junitTest/*" --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
-      working-directory: ${{ runner.workspace }}
